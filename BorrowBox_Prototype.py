@@ -1,13 +1,21 @@
 # BorrowBox
 # Final Project Prototype
 
+import json
 from datetime import date
 
 """=========================
-            DATA
+        FILE NAMES
+========================="""
+    
+EQUIPMENT_FILE = "equipment.json"
+BORROW_RECORDS_FILE = "borrow_records.json"
+
+"""=========================
+        DEFAULTDATA
 ========================="""
 
-equipment = [
+default_equipment = [
     {
         "id": "EQ001",
         "name": "Projector",
@@ -31,7 +39,69 @@ equipment = [
     }
 ]
 
-borrow_records = []
+
+"""=========================
+       FILE HANDLING
+========================="""
+
+def load_equipment():
+    try:
+        with open(EQUIPMENT_FILE, "r") as file:
+            data = json.load(file)
+
+            if isinstance(data, list):
+                return data
+
+            print("Invalid equipment file. Loading default equipment.")
+            return default_equipment.copy()
+
+    except FileNotFoundError:
+        save_equipment(default_equipment)
+        return default_equipment.copy()
+
+    except json.JSONDecodeError:
+        print("Equipment file is empty or corrupted.")
+        print("Loading default equipment.")
+
+        save_equipment(default_equipment)
+        return default_equipment.copy()
+
+
+def save_equipment(data):
+    with open(EQUIPMENT_FILE, "w") as file:
+        json.dump(data, file, indent=4)
+
+
+def load_borrow_records():
+    try:
+        with open(BORROW_RECORDS_FILE, "r") as file:
+            data = json.load(file)
+
+            if isinstance(data, list):
+                return data
+
+            print("Invalid borrowing records file.")
+            return []
+
+    except FileNotFoundError:
+        save_borrow_records([])
+        return []
+
+    except json.JSONDecodeError:
+        print("Borrowing records file is empty or corrupted.")
+        save_borrow_records([])
+        return []
+
+
+def save_borrow_records(data):
+    with open(BORROW_RECORDS_FILE, "w") as file:
+        json.dump(data, file, indent=4)
+
+
+# Load data when the program starts
+equipment = load_equipment()
+borrow_records = load_borrow_records()
+
 
 """=========================
       DISPLAY FUNCTIONS
@@ -145,6 +215,7 @@ def add_equipment():
             print(f"{'[X]Equipment ID cannot be empty.':^60}")
         elif find_equipment(equipment_id):
             print(f"{'[X]ERROR: Equipment ID already exists.':^60}")
+            print(f"{'Please enter a different ID.':^60}")
         else:
             break
 
@@ -171,6 +242,8 @@ def add_equipment():
     }
 
     equipment.append(new_equipment)
+    
+    save_equipment(equipment) # Save the updated equipment list to the file
 
     print(f"{'[Equipment ADDED successfully!]':^60}")
     print(f"Equipment ID: {equipment_id}\n"
@@ -225,7 +298,7 @@ def search_equipment():
 def borrow_equipment():
     display_title("BORROW EQUIPMENT")
 
-    equipment_id = input("Equipment ID: ")
+    equipment_id = input("Equipment ID: ").strip()
     item = find_equipment(equipment_id)
 
     if item is None:
@@ -248,7 +321,7 @@ def borrow_equipment():
         return
 
     while True:
-        borrower = input("Borrower Name: ")
+        borrower = input("Borrower Name: ").strip()
 
         if not borrower:
             print(f"{'[X]Borrower name cannot be empty.':^60}")
@@ -270,6 +343,9 @@ def borrow_equipment():
     }
 
     borrow_records.append(record)
+    
+    save_equipment(equipment)  # Save the updated equipment list to the file
+    save_borrow_records(borrow_records)  # Save the updated borrowing records to the file
 
     display_title("BORROWING SUCCESSFUL")
     print(f"Transaction ID\t\t: {transaction_id}\n"
@@ -321,6 +397,9 @@ def return_equipment():
     item['available'] += record['quantity']
     record['date_returned'] = str(date.today())
     record['status'] = "Returned"
+    
+    save_equipment(equipment)
+    save_borrow_records(borrow_records) 
 
     print(f"{'[Equipment RETURNED successfully!]':^60}")
     print(f"Equipment: {item['name']}\n"
