@@ -1,4 +1,5 @@
 from database.database import Database
+
 from .model import Equipment
 
 

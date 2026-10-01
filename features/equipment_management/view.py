@@ -1,17 +1,16 @@
 from PyQt6.QtCore import Qt
-
 from PyQt6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
+    QAbstractItemView,
     QFormLayout,
-    QLineEdit,
-    QPushButton,
-    QMessageBox,
-    QTableWidget,
+    QHBoxLayout,
     QHeaderView,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QTableWidget,
     QTableWidgetItem,
-    QAbstractItemView
+    QVBoxLayout,
+    QWidget,
 )
 
 from .model import Equipment
