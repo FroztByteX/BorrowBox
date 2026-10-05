@@ -2,6 +2,7 @@ from datetime import datetime
 
 from database.database import Database
 
+from .model import EquipmentReturn
 from .repository import EquipmentReturnRepository
 
 
@@ -10,7 +11,10 @@ class EquipmentReturnService:
         self.database = database
         self.repository = EquipmentReturnRepository(database)
 
-    def return_equipment(self, transaction_id: int) -> None:
+    def get_active_transactions(self):
+        return self.repository.get_active_transactions()
+
+    def return_equipment(self, transaction_id: int) -> EquipmentReturn:
         transaction = self.repository.get_transaction(transaction_id)
 
         if transaction is None:
@@ -34,3 +38,20 @@ class EquipmentReturnService:
                 "UPDATE equipments SET available = available + ? WHERE id = ?",
                 (quantity, equipment_id)
             )
+
+        receipt = self.repository.get_transaction_details(transaction_id)
+
+        if receipt is None:
+            raise ValueError("Unable to retrieve transaction details for the receipt.")
+
+        return EquipmentReturn(
+            transaction_id=receipt[0],
+            borrower_id=receipt[1],
+            borrower_name=receipt[2],
+            equipment_id=receipt[3],
+            equipment_name=receipt[4],
+            quantity=receipt[5],
+            date_borrowed=receipt[6],
+            date_returned=receipt[7],
+            status=receipt[8]
+        )

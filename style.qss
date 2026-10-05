@@ -1,0 +1,301 @@
+* {
+    font-family: "Segoe UI", "Arial", sans-serif;
+    font-size: 14px;
+}
+
+QWidget {
+/*    background-color: #F4D6CC;*/
+    color: #32373B;
+}
+
+
+#mainContent {
+    background-color: #F4D6CC;
+}
+
+
+QLabel {
+    background-color: transparent;
+    color: #32373B;
+}
+
+QLabel#formLabel {
+    color: #4A5859;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+#sidebar {
+    background-color: #32373B;
+    border: none;
+}
+
+
+#sidebarLogo {
+    background-color: #transparent;
+    color: #F4B860;
+
+    border-radius: 8px;
+
+    min-width: 36px;
+    max-width: 36px;
+
+    min-height: 36px;
+    max-height: 36px;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+#sidebarWordmark {
+    background-color: transparent;
+    color: #FFFFFF;
+    padding-left: 4px;
+}
+
+
+#sidebarButton {
+    background-color: transparent;
+
+    border: none;
+    border-radius: 8px;
+
+    color: #FFFFFF;
+
+    text-align: left;
+
+    padding-left: 12px;
+    padding-right: 12px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    spacing: 10px;
+}
+
+#sidebarButton::icon {
+    padding-right: 6px;
+}
+
+
+#sidebarButton:checked {
+    background-color: #C83E4D;
+    color: #FFFFFF;
+
+    border-bottom: 2px solid #F4B860;
+    padding-left: 8px;
+    font-weight: 700;
+}
+
+#sidebarButton:checked:hover {
+    background-color: #C83E4D;
+    color: #FFFFFF;
+}
+
+/* Hover */
+
+#sidebarButton:hover {
+    background-color: #4A5859;
+    color: #FFFFFF;
+}
+
+/* Pressed */
+
+#sidebarButton:pressed {
+    background-color: #C83E4D;
+    color: #FFFFFF;
+}
+
+
+#collapseButton {
+    background-color: #4A5859;
+
+    border: none;
+    border-radius: 8px;
+
+    color: #FFFFFF;
+
+    min-height: 40px;
+
+    font-weight: 600;
+}
+
+#collapseButton:hover {
+    background-color: #C83E4D;
+}
+
+#collapseButton:pressed {
+    background-color: #A92F3D;
+}
+
+
+#appHeader {
+    background-color: #FFFFFF;
+    border: none;
+    border-bottom: 1px solid #F4D6CC;
+    border-radius: 0;
+    min-height: 50px;
+}
+
+
+#pageTitle {
+    background-color: transparent;
+    color: #32373B;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+
+#headerWordmark {
+    background-color: transparent;
+    color: #4A5859;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+
+QLineEdit {
+    background-color: #FFFFFF;
+    color: #32373B;
+
+    border: 1px solid #B8C0C0;
+    border-radius: 7px;
+
+    min-height: 30px;
+
+    padding: 5px 10px;
+
+    selection-background-color: #F4B860;
+    selection-color: #32373B;
+}
+
+QLineEdit:hover {
+    border: 1px solid #4A5859;
+}
+
+QLineEdit:focus {
+    border: 2px solid #C83E4D;
+}
+
+
+QComboBox {
+    background-color: #FFFFFF;
+    color: #32373B;
+
+    border: 1px solid #4A5859;
+    border-radius: 7px;
+
+    min-height: 30px;
+    padding: 5px 9px;
+}
+
+QComboBox:hover {
+    border: 1px solid #4A5859;
+}
+
+QComboBox:focus {
+    border: 2px solid #C83E4D;
+}
+
+QComboBox::drop-down {
+    background-color: transparent;
+    border: none;
+    width: 28px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #FFFFFF;
+    color: #32373B;
+
+    border: 1px solid #B8C0C0;
+    selection-background-color: #F4B860;
+    selection-color: #32373B;
+}
+
+
+QPushButton {
+    background-color: #C83E4D;
+    color: #FFFFFF;
+
+    border: none;
+    border-radius: 7px;
+
+    min-height: 30px;
+    padding: 6px 14px;
+
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: #A92F3D;
+}
+
+QPushButton:pressed {
+    background-color: #8F2734;
+}
+
+QPushButton:disabled {
+    background-color: #A9A9A9;
+    color: #EAEAEA;
+}
+
+
+QScrollBar:vertical {
+    background-color: #F4D6CC;
+    border: none;
+    width: 9px;
+    margin: 2px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #4A5859;
+    border-radius: 4px;
+    min-height: 25px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #C83E4D;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0;
+}
+
+QScrollBar:horizontal {
+    background-color: #F4D6CC;
+    border: none;
+    height: 9px;
+    margin: 2px;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: #4A5859;
+    border-radius: 4px;
+    min-width: 25px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: #C83E4D;
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0;
+}
+
+
+QMessageBox {
+    background-color: #FFFFFF;
+    color: #32373B;
+}
+
+QMessageBox QLabel {
+    color: #32373B;
+}
+
+QMessageBox QPushButton {
+    min-width: 70px;
+}

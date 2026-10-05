@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QAbstractItemView,
@@ -26,6 +28,7 @@ class EquipmentBorrowingView(QWidget):
         self.service = service
         self.equipment_service = equipment_service
         self.build_ui()
+        self.setStyleSheet((Path(__file__).with_name("style.qss")).read_text())
         self.refresh()
 
     def build_ui(self) -> None:
@@ -33,29 +36,35 @@ class EquipmentBorrowingView(QWidget):
         form = QFormLayout()
 
         self.borrower_input = QComboBox()
+        self.borrower_input.setObjectName("formCombo")
         self.borrower_input.currentIndexChanged.connect(self.borrower_selection_changed)
         form.addRow("Borrower", self.borrower_input)
 
         self.name_label = QLabel("Borrower Name")
         self.name_input = QLineEdit()
+        self.name_input.setObjectName("formInput")
         form.addRow(self.name_label, self.name_input)
 
         self.contact_label = QLabel("Borrower Contact")
         self.contact_input = QLineEdit()
+        self.contact_input.setObjectName("formInput")
         form.addRow(self.contact_label, self.contact_input)
 
         self.equipment_input = QComboBox()
         form.addRow("Equipment", self.equipment_input)
 
         self.quantity_input = QLineEdit()
+        self.quantity_input.setObjectName("formInput")
         form.addRow("Quantity", self.quantity_input)
         layout.addLayout(form)
 
         borrow_button = QPushButton("Borrow Equipment")
+        borrow_button.setObjectName("primaryButton")
         borrow_button.clicked.connect(self.borrow_equipment)
         layout.addWidget(borrow_button)
 
         self.table = QTableWidget(0, 7)
+        self.table.setObjectName("dataTable")
         self.table.setHorizontalHeaderLabels([
             "Transaction ID", "Borrower ID", "Equipment ID",
             "Quantity", "Date Borrowed", "Date Returned", "Status"

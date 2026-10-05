@@ -1,0 +1,48 @@
+QWidget {
+    background-color: #F7F8F8;
+    color: #32373B;
+    font-family: "Segoe UI", "Arial", sans-serif;
+    font-size: 14px;
+}
+
+#dashboardTitle {
+    background-color: transparent;
+    color: #32373B;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    padding: 4px 2px;
+}
+
+#statCard {
+    background-color: #FFFFFF;
+
+    border: 1px solid #E4E7E7;
+    border-radius: 9px;
+}
+
+#statTitle {
+    background-color: transparent;
+    color: #4A5859;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#statValue {
+    background-color: transparent;
+    color: #C83E4D;
+
+    font-size: 26px;
+    font-weight: 700;
+}
+
+#chartCard {
+    background-color: #FFFFFF;
+
+    border: 1px solid #E4E7E7;
+    border-radius: 9px;
+
+    padding: 6px;
+}
