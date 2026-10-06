@@ -17,6 +17,9 @@ class Borrower:
         if not self.contact:
             raise ValueError("Borrower contact must not be empty")
 
+        if not self.contact.isdigit() or len(self.contact) != 11:
+            raise ValueError("Contact number must be exactly 11 digits.\nExample: 09123456789")
+
 
 @dataclass
 class BorrowRecord:

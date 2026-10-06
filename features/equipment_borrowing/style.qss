@@ -1,52 +1,10 @@
-QWidget {
-    background-color: #F7F8F8;
-    color: #32373B;
-
-    font-family: "Segoe UI", "Arial", sans-serif;
-    font-size: 14px;
-}
-
-QLabel {
-    background-color: transparent;
-    color: #4A5859;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-QLineEdit#formInput,
-QComboBox#formCombo {
-    background-color: #FFFFFF;
-    color: #32373B;
-
-    border: 1px solid #C7CDCD;
-    border-radius: 7px;
-
-    min-height: 30px;
-
-    padding: 5px 10px;
-}
-
-QLineEdit#formInput:hover,
-QComboBox#formCombo:hover {
-    border: 1px solid #4A5859;
-}
-
-QLineEdit#formInput:focus,
-QComboBox#formCombo:focus {
-    border: 2px solid #C83E4D;
-}
-
 #primaryButton {
     background-color: #C83E4D;
     color: #FFFFFF;
-
     border: none;
     border-radius: 7px;
-
     min-height: 34px;
-
     padding: 6px 16px;
-
     font-weight: 700;
 }
 
@@ -56,52 +14,4 @@ QComboBox#formCombo:focus {
 
 #primaryButton:pressed {
     background-color: #8F2734;
-}
-
-QPushButton {
-    background-color: #C83E4D;
-    color: #FFFFFF;
-    min-height: 32px;
-
-    border: none;
-    border-radius: 7px;
-
-    padding: 6px 14px;
-
-    font-weight: 600;
-}
-
-QTableWidget#dataTable {
-    background-color: #FFFFFF;
-
-    border: 1px solid #DDE1E1;
-    border-radius: 8px;
-
-    gridline-color: #E6E9E9;
-
-    selection-background-color: #F4D6CC;
-    selection-color: #32373B;
-
-    alternate-background-color: #FAFBFB;
-}
-
-QTableWidget#dataTable::item {
-    padding: 7px;
-}
-
-QTableWidget#dataTable::item:hover {
-    background-color: #F4D6CC;
-}
-
-QHeaderView::section {
-    background-color: #4A5859;
-    color: #FFFFFF;
-
-    border: none;
-    border-right: 1px solid #5A6869;
-
-    padding: 8px;
-
-    font-size: 13px;
-    font-weight: 700;
 }

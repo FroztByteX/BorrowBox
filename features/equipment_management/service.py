@@ -24,7 +24,21 @@ class EquipmentManagementService:
         if self.repository.exists(equipment.name, equipment.category, equipment.id):
             raise ValueError("Another equipment with the same name and category already exists.")
 
+        existing_equipment = self.repository.get(equipment.id)
+        if existing_equipment is None:
+            raise ValueError("Equipment was not found.")
+
+        borrowed_quantity = existing_equipment.quantity - existing_equipment.available
+
+        if equipment.quantity < borrowed_quantity:
+            raise ValueError(f"Quantity cannot be less than the number\nof currently borrowed units ({borrowed_quantity}).")
+
+        equipment.available = equipment.quantity - borrowed_quantity
+
         return self.repository.update(equipment)
 
     def delete_equipment(self, equipment_id: int) -> None:
+        if self.repository.has_active_borrowing(equipment_id):
+            raise ValueError("This equipment is currently borrowed.\nYou cannot delete it until all borrowed units are returned.")
+
         self.repository.delete(equipment_id)

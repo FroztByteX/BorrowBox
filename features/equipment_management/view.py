@@ -35,9 +35,10 @@ class SortableTableWidgetItem(QTableWidgetItem):
 
 
 class EquipmentManagementView(QWidget):
-    def __init__(self, service: EquipmentManagementService):
+    def __init__(self, service: EquipmentManagementService, refresh_callback=None):
         super().__init__()
         self.service = service
+        self.refresh_callback = refresh_callback
         self.selected_equipment_id = None
         self.build_ui()
         self.setStyleSheet(Path(__file__).with_name("style.qss").read_text())
@@ -112,6 +113,8 @@ class EquipmentManagementView(QWidget):
         QMessageBox.information(self,"Adding Success",f"Equipment is added successfully.")
         self.clear_inputs()
         self.refresh()
+        if self.refresh_callback:
+            self.refresh_callback()
 
     def select_equipment(self,row: int,column: int) -> None:
         item = self.table.item(row,0)
@@ -147,6 +150,8 @@ class EquipmentManagementView(QWidget):
         QMessageBox.information(self,"Updating Success",f"Equipment was updated successfully.")
         self.clear_inputs()
         self.refresh()
+        if self.refresh_callback:
+            self.refresh_callback()
 
     def delete_equipment(self) -> None:
         if self.selected_equipment_id is None:
@@ -157,11 +162,17 @@ class EquipmentManagementView(QWidget):
         if answer != QMessageBox.StandardButton.Yes:
             return
 
-        self.service.delete_equipment(self.selected_equipment_id)
+        try:
+            self.service.delete_equipment(self.selected_equipment_id)
+        except ValueError as error:
+            QMessageBox.warning(self, "Cannot Delete Equipment", str(error))
+            return
 
         QMessageBox.information(self,"Deleting Success",f"Equipment was deleted successfully.")
         self.clear_inputs()
         self.refresh()
+        if self.refresh_callback:
+            self.refresh_callback()
 
     def clear_inputs(self) -> None:
         self.name_input.clear()

@@ -16,9 +16,10 @@ from .service import EquipmentReturnService
 
 
 class EquipmentReturnView(QWidget):
-    def __init__(self, service: EquipmentReturnService):
+    def __init__(self, service: EquipmentReturnService, refresh_callback=None):
         super().__init__()
         self.service = service
+        self.refresh_callback = refresh_callback
         self.build_ui()
         self.setStyleSheet((Path(__file__).with_name("style.qss")).read_text())
         self.refresh()
@@ -61,6 +62,7 @@ class EquipmentReturnView(QWidget):
         layout.addWidget(receipt_box)
 
         self.clear_receipt()
+        self.refresh()
 
     def refresh(self) -> None:
         current_transaction_id = self.transaction_input.currentData(Qt.ItemDataRole.UserRole)
@@ -103,6 +105,8 @@ class EquipmentReturnView(QWidget):
                                 f"Transaction BTR-{receipt.transaction_id:03d} has been marked as returned.")
 
         self.refresh()
+        if self.refresh_callback:
+            self.refresh_callback()
 
     def display_receipt(self, receipt) -> None:
         self.transaction_label.setText(f"BTR-{receipt.transaction_id:03d}")

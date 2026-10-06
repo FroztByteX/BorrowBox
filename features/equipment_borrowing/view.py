@@ -23,10 +23,11 @@ from .service import EquipmentBorrowingService
 
 
 class EquipmentBorrowingView(QWidget):
-    def __init__(self, service: EquipmentBorrowingService, equipment_service: EquipmentManagementService):
+    def __init__(self, service: EquipmentBorrowingService, equipment_service: EquipmentManagementService, refresh_callback=None):
         super().__init__()
         self.service = service
         self.equipment_service = equipment_service
+        self.refresh_callback = refresh_callback
         self.build_ui()
         self.setStyleSheet((Path(__file__).with_name("style.qss")).read_text())
         self.refresh()
@@ -48,9 +49,11 @@ class EquipmentBorrowingView(QWidget):
         self.contact_label = QLabel("Borrower Contact")
         self.contact_input = QLineEdit()
         self.contact_input.setObjectName("formInput")
+        self.contact_input.setPlaceholderText("e.g., 09*********")
         form.addRow(self.contact_label, self.contact_input)
 
         self.equipment_input = QComboBox()
+        self.equipment_input.setObjectName("formCombo")
         form.addRow("Equipment", self.equipment_input)
 
         self.quantity_input = QLineEdit()
@@ -90,7 +93,7 @@ class EquipmentBorrowingView(QWidget):
         selected_index = 0
 
         for borrower in borrowers:
-            self.borrower_input.addItem(f"BID-{borrower.id:03d} | {borrower.name}", borrower.id)
+            self.borrower_input.addItem(f"BID-{borrower.id:03d} | {borrower.name} | {borrower.contact}", borrower.id)
             if borrower.id == current_borrower_id:
                 selected_index = (self.borrower_input.count() - 1)
 
@@ -168,6 +171,8 @@ class EquipmentBorrowingView(QWidget):
 
         self.clear_inputs()
         self.refresh()
+        if self.refresh_callback:
+            self.refresh_callback()
 
     def clear_inputs(self) -> None:
         self.borrower_input.setCurrentIndex(0)

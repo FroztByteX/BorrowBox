@@ -34,6 +34,7 @@ class BorrowBoxWindow(QWidget):
     def __init__(self, dashboard, equipment_management, equipment_borrowing, equipment_return, borrowing_records, search_equipment):
         super().__init__()
         self.setWindowTitle("BorrowBox")
+        self.setWindowIcon(QIcon(str(Path(__file__).parent / "assets" / "logo" / "logo.svg")))
         self.resize(1200, 700)
 
         self.sidebar_expanded = True
@@ -151,9 +152,9 @@ class BorrowBoxWindow(QWidget):
     def build_pages(self) -> None:
         self.pages = QStackedWidget()
         self.dashboard_view = DashboardView(self.dashboard)
-        self.equipment_management_view = EquipmentManagementView(self.equipment_management)
-        self.equipment_borrowing_view = EquipmentBorrowingView(self.equipment_borrowing, self.equipment_management)
-        self.equipment_return_view = EquipmentReturnView(self.equipment_return)
+        self.equipment_management_view = EquipmentManagementView(self.equipment_management, self.refresh_all_pages)
+        self.equipment_borrowing_view = EquipmentBorrowingView(self.equipment_borrowing, self.equipment_management, self.refresh_all_pages)
+        self.equipment_return_view = EquipmentReturnView(self.equipment_return, self.refresh_all_pages)
         self.borrowing_records_view = BorrowingRecordsView(self.borrowing_records)
         self.search_equipment_view = EquipmentSearchView(self.search_equipment)
 
@@ -166,6 +167,7 @@ class BorrowBoxWindow(QWidget):
 
     def show_page(self, index: int) -> None:
         self.pages.setCurrentIndex(index)
+        self.refresh_current_page(index)
 
         buttons = [self.dashboard_button, self.equipment_button, self.borrow_button, self.return_button, self.records_button, self.search_button]
 
@@ -211,13 +213,23 @@ class BorrowBoxWindow(QWidget):
             self.sidebar_expanded = True
 
     def refresh_current_page(self, index: int) -> None:
-        current_page = self.tabs.widget(index)
+        current_page = self.pages.widget(index)
 
         if hasattr(current_page, "refresh"):
             current_page.refresh()
 
         if hasattr(current_page, "search_equipment"):
             current_page.search_equipment()
+
+    def refresh_all_pages(self) -> None:
+        for index in range(self.pages.count()):
+            page = self.pages.widget(index)
+
+            if hasattr(page, "refresh"):
+                page.refresh()
+
+            if hasattr(page, "search_equipment"):
+                page.search_equipment()
 
 
 def main():

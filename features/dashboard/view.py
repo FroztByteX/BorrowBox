@@ -1,16 +1,18 @@
 from pathlib import Path
 
 from PyQt6.QtCharts import (
+    QAbstractBarSeries,
     QBarCategoryAxis,
     QBarSeries,
     QBarSet,
     QChart,
     QChartView,
     QPieSeries,
+    QValueAxis
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor
-from PyQt6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QScrollArea, QVBoxLayout, QWidget
 
 from .service import DashboardService
 
@@ -25,16 +27,20 @@ class DashboardView(QWidget):
         self.refresh()
 
     def build_ui(self) -> None:
-        layout = QVBoxLayout(self)
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(4, 4, 4, 4)
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setFrameShape(QScrollArea.Shape.NoFrame)
+
+        content = QWidget()
+        layout = QVBoxLayout(content)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(14)
 
-        title = QLabel("BorrowBox Dashboard")
-        title.setObjectName("dashboardTitle")
-        layout.addWidget(title)
-
         cards_layout = QGridLayout()
         cards_layout.setSpacing(12)
+
         self.total_equipment = self.create_card(cards_layout, "Total Equipment", 0, 0)
         self.total_quantity = self.create_card(cards_layout, "Total Quantity", 0, 1)
         self.available_equipment = self.create_card(cards_layout, "Available Equipment", 0, 2)
@@ -49,19 +55,27 @@ class DashboardView(QWidget):
         charts_layout.setSpacing(12)
         self.availability_chart = QChartView()
         self.availability_chart.setObjectName("chartCard")
+        self.availability_chart.setMinimumHeight(330)
         self.category_chart = QChartView()
         self.category_chart.setObjectName("chartCard")
+        self.category_chart.setMinimumHeight(330)
         charts_layout.addWidget(self.availability_chart)
         charts_layout.addWidget(self.category_chart)
         layout.addLayout(charts_layout)
 
         self.most_borrowed_chart = QChartView()
         self.most_borrowed_chart.setObjectName("chartCard")
+        self.most_borrowed_chart.setMinimumHeight(400)
         layout.addWidget(self.most_borrowed_chart)
+
+        layout.addStretch()
+        scroll_area.setWidget(content)
+        main_layout.addWidget(scroll_area)
 
     def create_card(self, layout: QGridLayout, title: str, row: int, column: int) -> QLabel:
         card = QWidget()
         card.setObjectName("statCard")
+        card.setFixedHeight(100)
         card_layout = QVBoxLayout(card)
         card_layout.setContentsMargins(16, 14, 16, 14)
         card_layout.setSpacing(6)
@@ -99,6 +113,8 @@ class DashboardView(QWidget):
         available_slice.setBrush(QColor("#4A5859"))
         borrowed_slice.setBrush(QColor("#C83E4D"))
 
+        series.setPieSize(0.85)
+
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Equipment Availability")
@@ -112,20 +128,38 @@ class DashboardView(QWidget):
         bar_set.setColor(QColor("#F4B860"))
 
         categories = []
+        max_value = 0
         for category, quantity in records:
             categories.append(str(category))
             bar_set.append(quantity)
+            max_value = max(max_value, quantity)
 
         series.append(bar_set)
+
+        series.setLabelsVisible(True)
+        series.setLabelsPosition(QAbstractBarSeries.LabelsPosition.LabelsOutsideEnd)
+        series.setLabelsFormat("@value")
 
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Borrowing by Category")
 
-        axis = QBarCategoryAxis()
-        axis.append(categories)
-        chart.addAxis(axis, Qt.AlignmentFlag.AlignBottom)
-        series.attachAxis(axis)
+        category_axis = QBarCategoryAxis()  # X-axis
+        category_axis.append(categories)
+
+        value_axis = QValueAxis()
+        if max_value == 0:
+            value_axis.setRange(0, 5)
+        else:
+            value_axis.setRange(0, max_value + 2)
+
+        value_axis.setTickCount(6)
+        value_axis.setLabelFormat("%d")
+
+        chart.addAxis(category_axis, Qt.AlignmentFlag.AlignBottom)
+        chart.addAxis(value_axis, Qt.AlignmentFlag.AlignLeft)
+        series.attachAxis(category_axis)
+        series.attachAxis(value_axis)
         self.category_chart.setChart(chart)
 
     def create_most_borrowed_chart(self) -> None:
@@ -135,19 +169,38 @@ class DashboardView(QWidget):
         bar_set.setColor(QColor("#C83E4D"))
 
         categories = []
+        max_value = 0
         for name, quantity in records:
             categories.append(str(name))
             bar_set.append(quantity)
+            max_value = max(max_value, quantity)
 
         series.append(bar_set)
+
+        series.setLabelsVisible(True)
+        series.setLabelsPosition(QAbstractBarSeries.LabelsPosition.LabelsOutsideEnd)
+        series.setLabelsFormat("@value")
 
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Most Borrowed Equipment")
         chart.setTitleBrush(QColor("#32373B"))
         chart.setBackgroundBrush(QColor("#FFFFFF"))
-        axis = QBarCategoryAxis()
-        axis.append(categories)
-        chart.addAxis(axis, Qt.AlignmentFlag.AlignBottom)
-        series.attachAxis(axis)
+
+        category_axis = QBarCategoryAxis()  # X-axis
+        category_axis.append(categories)
+
+        value_axis = QValueAxis()
+        if max_value == 0:
+            value_axis.setRange(0, 5)
+        else:
+            value_axis.setRange(0, max_value + 2)
+
+        value_axis.setTickCount(6)
+        value_axis.setLabelFormat("%d")
+
+        chart.addAxis(category_axis, Qt.AlignmentFlag.AlignBottom)
+        chart.addAxis(value_axis, Qt.AlignmentFlag.AlignLeft)
+        series.attachAxis(category_axis)
+        series.attachAxis(value_axis)
         self.most_borrowed_chart.setChart(chart)

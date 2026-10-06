@@ -121,6 +121,15 @@ class EquipmentRepository:
 
         return equipment
 
+    def has_active_borrowing(self, equipment_id: int) -> bool:
+        with self.database.connect() as con:
+            row = con.execute(
+                "SELECT EXISTS(SELECT 1 FROM borrow_records WHERE equipment_id = ? AND status = 'Borrowed')",
+                (equipment_id,)
+            ).fetchone()
+
+        return bool(row[0])
+
     def delete(self, equipment_id: int) -> None:
         with self.database.connect() as con:
             con.execute(
