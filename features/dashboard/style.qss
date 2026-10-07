@@ -14,7 +14,7 @@
 
 #statTitle {
     background-color: transparent;
-    color: #4A5859;
+    color: #32373B;
     font-size: 13px;
     font-weight: 700;
 }

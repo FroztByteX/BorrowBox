@@ -8,10 +8,11 @@ from PyQt6.QtCharts import (
     QChart,
     QChartView,
     QPieSeries,
+    QPieSlice,
     QValueAxis
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QColor
+from PyQt6.QtGui import QColor, QFont
 from PyQt6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QScrollArea, QVBoxLayout, QWidget
 
 from .service import DashboardService
@@ -24,6 +25,8 @@ class DashboardView(QWidget):
         self.setWindowTitle("Dashboard")
         self.build_ui()
         self.setStyleSheet((Path(__file__).with_name("style.qss")).read_text())
+        self.label_font = QFont("Segoe UI", 12, QFont.Weight.Bold)
+        self.label_color = QColor("#32373B")
         self.refresh()
 
     def build_ui(self) -> None:
@@ -113,12 +116,34 @@ class DashboardView(QWidget):
         available_slice.setBrush(QColor("#4A5859"))
         borrowed_slice.setBrush(QColor("#C83E4D"))
 
+        available_slice.setLabelVisible(True)
+        borrowed_slice.setLabelVisible(True)
+        available_slice.setLabelPosition(QPieSlice.LabelPosition.LabelInsideHorizontal)
+        borrowed_slice.setLabelPosition(QPieSlice.LabelPosition.LabelInsideHorizontal)
+
+        available_slice.setLabel(f"{available_slice.percentage() * 100:.0f}%")
+        available_slice.setLabelColor(QColor("#FFFFFF"))
+        borrowed_slice.setLabel(f"{borrowed_slice.percentage() * 100:.0f}%")
+        borrowed_slice.setLabelColor(QColor("#FFFFFF"))
+
+        available_slice.setLabelFont(self.label_font)
+        borrowed_slice.setLabelFont(self.label_font)
+
         series.setPieSize(0.85)
 
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Equipment Availability")
+        chart.setTitleFont(self.label_font)
+        chart.setTitleBrush(self.label_color)
+        chart.setBackgroundBrush(QColor("#FFFFFF"))
+
         chart.legend().setVisible(True)
+        legend = chart.legend().markers(series)
+        if len(legend) >= 2:
+            legend[0].setLabel("Available")
+            legend[1].setLabel("Borrowed")
+
         self.availability_chart.setChart(chart)
 
     def create_category_chart(self) -> None:
@@ -137,21 +162,23 @@ class DashboardView(QWidget):
         series.append(bar_set)
 
         series.setLabelsVisible(True)
-        series.setLabelsPosition(QAbstractBarSeries.LabelsPosition.LabelsOutsideEnd)
+        series.setLabelsPosition(QAbstractBarSeries.LabelsPosition.LabelsInsideEnd)
         series.setLabelsFormat("@value")
 
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Borrowing by Category")
+        chart.setTitleFont(self.label_font)
+        chart.setTitleBrush(self.label_color)
 
         category_axis = QBarCategoryAxis()  # X-axis
         category_axis.append(categories)
 
         value_axis = QValueAxis()
-        if max_value == 0:
+        if max_value <= 5:
             value_axis.setRange(0, 5)
         else:
-            value_axis.setRange(0, max_value + 2)
+            value_axis.setRange(0, max_value + 1)
 
         value_axis.setTickCount(6)
         value_axis.setLabelFormat("%d")
@@ -178,14 +205,14 @@ class DashboardView(QWidget):
         series.append(bar_set)
 
         series.setLabelsVisible(True)
-        series.setLabelsPosition(QAbstractBarSeries.LabelsPosition.LabelsOutsideEnd)
+        series.setLabelsPosition(QAbstractBarSeries.LabelsPosition.LabelsInsideEnd)
         series.setLabelsFormat("@value")
 
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Most Borrowed Equipment")
-        chart.setTitleBrush(QColor("#32373B"))
-        chart.setBackgroundBrush(QColor("#FFFFFF"))
+        chart.setTitleFont(self.label_font)
+        chart.setTitleBrush(self.label_color)
 
         category_axis = QBarCategoryAxis()  # X-axis
         category_axis.append(categories)
@@ -194,7 +221,7 @@ class DashboardView(QWidget):
         if max_value == 0:
             value_axis.setRange(0, 5)
         else:
-            value_axis.setRange(0, max_value + 2)
+            value_axis.setRange(0, max_value + 1)
 
         value_axis.setTickCount(6)
         value_axis.setLabelFormat("%d")
