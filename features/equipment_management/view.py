@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
     QAbstractItemView,
     QFormLayout,
@@ -47,21 +48,24 @@ class EquipmentManagementView(QWidget):
     def build_ui(self) -> None:
         layout = QVBoxLayout(self)
         form = QFormLayout()
-        self.name_input = QLineEdit()
-        self.name_input.setObjectName("formInput")
-        self.category_input = QLineEdit()
-        self.category_input.setObjectName("formInput")
-        self.quantity_input = QLineEdit()
-        self.quantity_input.setObjectName("formInput")
 
         name_label = QLabel("Equipment Name")
         name_label.setObjectName("formLabel")
+        self.name_input = QLineEdit()
+        self.name_input.setObjectName("formInput")
+        self.name_input.setPlaceholderText("e.g., Projector")
 
         category_label = QLabel("Category")
         category_label.setObjectName("formLabel")
+        self.category_input = QLineEdit()
+        self.category_input.setObjectName("formInput")
+        self.category_input.setPlaceholderText("e.g., Electronics")
 
         quantity_label = QLabel("Quantity")
         quantity_label.setObjectName("formLabel")
+        self.quantity_input = QLineEdit()
+        self.quantity_input.setObjectName("formInput")
+        self.quantity_input.setPlaceholderText("e.g., 1")
 
         form.addRow(name_label, self.name_input)
         form.addRow(category_label, self.category_input)
@@ -69,6 +73,15 @@ class EquipmentManagementView(QWidget):
         layout.addLayout(form)
 
         button_layout = QHBoxLayout()
+
+        self.search_input = QLineEdit()
+        self.search_input.setObjectName("searchInput")
+        self.search_input.setPlaceholderText("Search ID, name, or category...")
+        self.search_input.setClearButtonEnabled(True)
+        self.search_input.textChanged.connect(self.search_equipment)
+        self.search_input.addAction(QIcon(str(Path(__file__).resolve().parents[2] / "assets" / "icons" / "search.svg")), QLineEdit.ActionPosition.LeadingPosition
+        )
+        button_layout.addWidget(self.search_input, 1)
 
         add_button = QPushButton("Add Equipment")
         add_button.setObjectName("addButton")
@@ -180,6 +193,28 @@ class EquipmentManagementView(QWidget):
         self.quantity_input.clear()
         self.selected_equipment_id = None
 
+    def search_equipment(self, text: str) -> None:
+        search_text = text.strip().casefold()
+
+        sorting_was_enabled = self.table.isSortingEnabled()
+        self.table.setSortingEnabled(False)
+
+        try:
+            for row in range(self.table.rowCount()):
+                id_item = self.table.item(row, 0)
+                name_item = self.table.item(row, 1)
+                category_item = self.table.item(row, 2)
+
+                matches = (not search_text
+                        or (id_item is not None and search_text in id_item.text().casefold())
+                        or (name_item is not None and search_text in name_item.text().casefold())
+                        or (category_item is not None and search_text in category_item.text().casefold())
+                )
+                self.table.setRowHidden(row, not matches)
+
+        finally:
+            self.table.setSortingEnabled(sorting_was_enabled)
+
     def refresh(self) -> None:
         equipments = self.service.get_equipment()
 
@@ -199,3 +234,4 @@ class EquipmentManagementView(QWidget):
                 self.table.setItem(row, column, item)
 
         self.table.setSortingEnabled(True)
+        self.search_equipment(self.search_input.text())

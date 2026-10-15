@@ -17,12 +17,15 @@
 }
 
 #deleteButton {
-    background-color: #32373B;
-    color: #FFFFFF;
+    background-color: #FFFFFF;
+    color: #C83E4D;
+    border: 1px solid #C83E4D;
 }
 
 #deleteButton:hover {
-    background-color: #4A5859;
+    background-color: #D55160;
+    color: #FFFFFF;
+    border: 1px solid #FFFFFF;
 }
 
 #clearButton {
@@ -32,4 +35,17 @@
 
 #clearButton:hover {
     background-color: #E2A34A;
+}
+
+#searchInput {
+    background-color: #FFFFFF;
+    color: #32373B;
+    border: 1px solid #4A5859;
+    border-radius: 5px;
+    padding: 4px 0px 4px 0px;
+    margin: 0px 10px 0px 0px;
+}
+
+#searchInput:focus {
+    border: 1px solid #C83E4D;
 }
