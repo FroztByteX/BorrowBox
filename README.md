@@ -16,7 +16,7 @@ The system allows users to:
 * Record equipment borrowing transactions
 * Process equipment returns
 * Track borrowing records
-* Search for equipment
+* Search equipment dynamically from the Equipment Management page
 * Monitor system information through a dashboard
 * Sort information displayed in tables
 
@@ -76,6 +76,8 @@ Users can:
 * Track total quantity
 * Track currently available quantity
 * Prevent duplicate equipment records
+* Search by equipment ID, name, or category as you type
+* Filter results using partial, case-insensitive matching
 * Sort table columns
 
 Equipment records use formatted IDs such as:
@@ -158,25 +160,16 @@ Available status filters include:
 
 ---
 
-### 6. Search Equipment
+### 6. Dynamic Equipment Search
 
-The Search Equipment feature allows users to search for equipment records.
+Equipment search is integrated into the Equipment Management page. The search field filters the equipment table as the user types, without requiring a separate Search button.
 
-Searches can be performed using information such as:
+Users can search by:
 * Equipment ID
 * Equipment name
 * Category
-* Availability
 
-The results display:
-* Equipment ID
-* Equipment Name
-* Category
-* Quantity
-* Available Quantity
-* Status
-
-Equipment can also be sorted using the table headers.
+The search supports partial matches and is case-insensitive. Clearing the search field displays the full equipment list again.
 
 
 
@@ -249,14 +242,7 @@ BorrowBox/
 │   │   ├── style.qss
 │   │   └── view.py
 │   │
-│   ├── borrowing_records/
-│   │   ├── model.py
-│   │   ├── repository.py
-│   │   ├── service.py
-│   │   ├── style.qss
-│   │   └── view.py
-│   │
-│   └── search_equipment/
+│   └── borrowing_records/
 │       ├── model.py
 │       ├── repository.py
 │       ├── service.py
@@ -437,11 +423,11 @@ BTR-001
 1. Open **Equipment Return**.
 2. Select an active borrowing transaction.
 3. Click **Return Equipment**.
-4. The system verifies the transaction.
-5. The transaction is marked as `Returned`.
-6. The equipment's available quantity is increased.
-7. A return receipt is displayed.
-8. A success message confirms the return.
+4. The system verifies the transaction and marks it as `Returned`.
+5. The equipment's available quantity is increased.
+6. A Return Receipt dialog opens automatically with the transaction details.
+7. Click **Close** to close the receipt dialog.
+8. Click **View Latest Receipt** to reopen the most recent receipt during the current application session.
 
 ---
 
@@ -459,11 +445,11 @@ BTR-001
 
 ### 6. Searching Equipment
 
-1. Open **Search Equipment**.
-2. Enter an equipment ID, name, category, or availability keyword.
-3. Click **Search** or press Enter.
-4. Review the matching equipment records.
-5. Click a column header to sort the results.
+1. Open **Equipment Management** from the sidebar.
+2. Type an equipment ID, name, or category into the search field beside the equipment action buttons.
+3. Review the table as it filters automatically while you type.
+4. Search terms can match part of an ID, name, or category and are not case-sensitive.
+5. Clear the search field to display all equipment records again.
 
 
 # OOP Implementation
@@ -481,13 +467,11 @@ Important classes include:
 * `EquipmentBorrowingService`
 * `EquipmentReturnService`
 * `BorrowingRecordsService`
-* `EquipmentSearchService`
 * `DashboardService`
 * `EquipmentManagementView`
 * `EquipmentBorrowingView`
 * `EquipmentReturnView`
 * `BorrowingRecordsView`
-* `EquipmentSearchView`
 * `DashboardView`
 
 Objects of these classes are created and used by the application to manage data, business logic, and the graphical interface.
@@ -679,11 +663,12 @@ Equipment records can be deleted through the Equipment Management feature.
 
 #### Search
 
-Equipment records can be searched based on available equipment information such as:
-* ID
+Equipment records can be searched from the Equipment Management page using:
+* Equipment ID
 * Name
 * Category
-* Availability
+
+The table filters dynamically as the user types, using partial and case-insensitive matching.
 
 
 # Screenshots
@@ -728,14 +713,6 @@ Equipment records can be searched based on available equipment information such 
 
 ---
 
-### Search Equipment
-
-![Search Equipment](screenshots/search-equipment.png)
-
-*Figure 6. Search Equipment interface for finding equipment records.*
-
----
-
 ### Collapsed Sidebar
 
 ![Collapsed Sidebar](screenshots/collapsed-sidebar.png)
@@ -777,6 +754,8 @@ The following test cases can be used to verify the major functions of BorrowBox.
 | Return equipment                    | Available quantity increases                               | Available quantity increases                  | Passed |
 | Return already returned transaction | System prevents duplicate return                           | Returned transaction cannot be returned again | Passed |
 | No active transactions              | System indicates that no active transactions are available | Message is displayed                          | Passed |
+| Receipt opens after successful return | Return Receipt dialog opens with transaction details | Receipt dialog opens with transaction details | Passed |
+| Reopen latest receipt                | Latest receipt can be opened again during the session | Latest receipt can be reopened              | Passed |
 
 ### 4. Borrowing Records Tests
 
@@ -787,14 +766,17 @@ The following test cases can be used to verify the major functions of BorrowBox.
 | Filter Returned  | Only returned records are shown         | Returned records are displayed | Passed |
 | Sort records     | Records can be sorted by columns        | Sorting works                  | Passed |
 
-### 5. Search Tests
+### 5. Dynamic Equipment Search Tests
 
-| Test Case                | Expected Result                         | Actual Result                     | Status |
-| ------------------------ | --------------------------------------- | --------------------------------- | ------ |
-| Search by equipment name | Matching equipment is displayed         | Matching records are displayed    | Passed |
-| Search by category       | Matching category records are displayed | Matching records are displayed    | Passed |
-| Search by equipment ID   | Matching equipment is displayed         | Matching equipment is displayed   | Passed |
-| Search with no match     | No matching records are displayed       | No matching records are displayed | Passed |
+| Test Case                         | Expected Result                                         | Actual Result                      | Status |
+| --------------------------------- | ------------------------------------------------------- | --------------------------------- | ------ |
+| Search by equipment name          | Matching equipment is displayed while typing           | Matching records are displayed    | Passed |
+| Search by category                | Matching category records are displayed while typing   | Matching records are displayed    | Passed |
+| Search by equipment ID            | Matching equipment is displayed while typing           | Matching equipment is displayed   | Passed |
+| Search using partial text         | Records containing the entered text are displayed      | Partial matches are displayed     | Passed |
+| Search with different letter case | Matching records are displayed regardless of letter case | Matching records are displayed | Passed |
+| Search with no match               | No matching records are displayed                      | No matching records are displayed | Passed |
+| Clear search field                 | All equipment records are displayed again              | All records are displayed again   | Passed |
 
 ### 6. Navigation and Interface Tests
 
@@ -821,7 +803,7 @@ The system does not currently calculate fines for late equipment returns.
 
 ### c. No Printed Borrowing Receipt
 
-The system currently provides transaction and return information through the application interface, but printing of a formal borrowing receipt has not yet been implemented.
+The system displays a return receipt in a dialog after a successful return, and the latest receipt can be reopened during the current application session. Printing a formal borrowing or return receipt has not yet been implemented.
 
 ### d. Local Database
 
