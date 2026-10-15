@@ -44,12 +44,13 @@ class EquipmentBorrowingView(QWidget):
         self.name_label = QLabel("Borrower Name")
         self.name_input = QLineEdit()
         self.name_input.setObjectName("formInput")
+        self.name_input.setPlaceholderText("Juan Dela Cruz")
         form.addRow(self.name_label, self.name_input)
 
         self.contact_label = QLabel("Borrower Contact")
         self.contact_input = QLineEdit()
         self.contact_input.setObjectName("formInput")
-        self.contact_input.setPlaceholderText("e.g., 09*********")
+        self.contact_input.setPlaceholderText("09xxxxxxxxx")
         form.addRow(self.contact_label, self.contact_input)
 
         self.equipment_input = QComboBox()
@@ -58,6 +59,7 @@ class EquipmentBorrowingView(QWidget):
 
         self.quantity_input = QLineEdit()
         self.quantity_input.setObjectName("formInput")
+        self.quantity_input.setPlaceholderText("e.g., 1")
         form.addRow("Quantity", self.quantity_input)
         layout.addLayout(form)
 
