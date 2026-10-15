@@ -26,12 +26,10 @@ from features.equipment_management.service import EquipmentManagementService
 from features.equipment_management.view import EquipmentManagementView
 from features.equipment_return.service import EquipmentReturnService
 from features.equipment_return.view import EquipmentReturnView
-from features.search_equipment.service import EquipmentSearchService
-from features.search_equipment.view import EquipmentSearchView
 
 
 class BorrowBoxWindow(QWidget):
-    def __init__(self, dashboard, equipment_management, equipment_borrowing, equipment_return, borrowing_records, search_equipment):
+    def __init__(self, dashboard, equipment_management, equipment_borrowing, equipment_return, borrowing_records):
         super().__init__()
         self.setWindowTitle("BorrowBox")
         self.setWindowIcon(QIcon(str(Path(__file__).parent / "assets" / "logo" / "logo.svg")))
@@ -44,7 +42,6 @@ class BorrowBoxWindow(QWidget):
         self.equipment_borrowing = equipment_borrowing
         self.equipment_return = equipment_return
         self.borrowing_records = borrowing_records
-        self.search_equipment = search_equipment
 
         main_layout = QHBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -99,14 +96,12 @@ class BorrowBoxWindow(QWidget):
         self.borrow_button = self.create_sidebar_button(str(icons_path / "borrow.svg"), "Equipment Borrowing", 2)
         self.return_button = self.create_sidebar_button(str(icons_path / "return.svg"), "Equipment Return", 3)
         self.records_button = self.create_sidebar_button(str(icons_path / "records.svg"), "Borrowing Records", 4)
-        self.search_button = self.create_sidebar_button(str(icons_path / "search.svg"), "Search Equipment", 5)
 
         sidebar_layout.addWidget(self.dashboard_button)
         sidebar_layout.addWidget(self.equipment_button)
         sidebar_layout.addWidget(self.borrow_button)
         sidebar_layout.addWidget(self.return_button)
         sidebar_layout.addWidget(self.records_button)
-        sidebar_layout.addWidget(self.search_button)
         sidebar_layout.addStretch()
 
         self.collapse_button = QPushButton("Collapse")
@@ -156,27 +151,25 @@ class BorrowBoxWindow(QWidget):
         self.equipment_borrowing_view = EquipmentBorrowingView(self.equipment_borrowing, self.equipment_management, self.refresh_all_pages)
         self.equipment_return_view = EquipmentReturnView(self.equipment_return, self.refresh_all_pages)
         self.borrowing_records_view = BorrowingRecordsView(self.borrowing_records)
-        self.search_equipment_view = EquipmentSearchView(self.search_equipment)
 
         self.pages.addWidget(self.dashboard_view)
         self.pages.addWidget(self.equipment_management_view)
         self.pages.addWidget(self.equipment_borrowing_view)
         self.pages.addWidget(self.equipment_return_view)
         self.pages.addWidget(self.borrowing_records_view)
-        self.pages.addWidget(self.search_equipment_view)
 
     def show_page(self, index: int) -> None:
         self.pages.setCurrentIndex(index)
         self.refresh_current_page(index)
 
-        buttons = [self.dashboard_button, self.equipment_button, self.borrow_button, self.return_button, self.records_button, self.search_button]
+        buttons = [self.dashboard_button, self.equipment_button, self.borrow_button, self.return_button, self.records_button]
 
         for button in buttons:
             button.setChecked(False)
 
         buttons[index].setChecked(True)
 
-        titles = ["Dashboard", "Equipment Management", "Equipment Borrowing", "Equipment Return", "Borrowing Records", "Search Equipment"]
+        titles = ["Dashboard", "Equipment Management", "Equipment Borrowing", "Equipment Return", "Borrowing Records"]
         self.header_title.setText(titles[index])
 
     def toggle_sidebar(self) -> None:
@@ -189,7 +182,6 @@ class BorrowBoxWindow(QWidget):
             self.borrow_button.setText("")
             self.return_button.setText("")
             self.records_button.setText("")
-            self.search_button.setText("")
             self.collapse_button.setText("")
             self.collapse_button.setIcon(QIcon(str(Path(__file__).parent / "assets" / "icons" / "expand.svg")))
 
@@ -205,7 +197,6 @@ class BorrowBoxWindow(QWidget):
             self.borrow_button.setText("Borrow Equipment")
             self.return_button.setText("Return Equipment")
             self.records_button.setText("Borrowing Records")
-            self.search_button.setText("Search Equipment")
             self.collapse_button.setText("Collapse")
             self.collapse_button.setIcon(QIcon(str(Path(__file__).parent / "assets" / "icons" / "collapse.svg")))
 
@@ -218,18 +209,12 @@ class BorrowBoxWindow(QWidget):
         if hasattr(current_page, "refresh"):
             current_page.refresh()
 
-        if hasattr(current_page, "search_equipment"):
-            current_page.search_equipment()
-
     def refresh_all_pages(self) -> None:
         for index in range(self.pages.count()):
             page = self.pages.widget(index)
 
             if hasattr(page, "refresh"):
                 page.refresh()
-
-            if hasattr(page, "search_equipment"):
-                page.search_equipment()
 
 
 def main():
@@ -244,9 +229,8 @@ def main():
     equipment_borrowing = EquipmentBorrowingService(database)
     equipment_return = EquipmentReturnService(database)
     borrowing_records = BorrowingRecordsService(database)
-    search_equipment = EquipmentSearchService(database)
 
-    window = BorrowBoxWindow(dashboard, equipment_management, equipment_borrowing, equipment_return, borrowing_records, search_equipment)
+    window = BorrowBoxWindow(dashboard, equipment_management, equipment_borrowing, equipment_return, borrowing_records)
     window.show()
 
     return app.exec()
