@@ -44,3 +44,29 @@ QPushButton {
 #receiptBox QLabel {
     color: #32373B;
 }
+
+#receiptTitle {
+    color: #C83E4D;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 8px;
+}
+
+#secondaryButton {
+    background-color: #4A5859;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 7px;
+    min-height: 34px;
+    padding: 6px 16px;
+    font-weight: 600;
+}
+
+#secondaryButton:hover {
+    background-color: #32373B;
+}
+
+#secondaryButton:disabled {
+    background-color: #DDE1E1;
+    color: #777777;
+}
